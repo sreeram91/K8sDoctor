@@ -1,11 +1,9 @@
 # K8sDoctor
 
-# K8sDoctor
-
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Language: Shell](https://img.shields.io/badge/language-Bash-yellow.svg)](#)
 
-K8sDoctor is a small, focused Kubernetes incident diagnostics tool for SREs and DevOps engineers. It scans a cluster for unhealthy pods and automatically collects targeted diagnostics (describe, per-container logs, events, pod YAML, and cluster info) into a timestamped incident bundle to accelerate troubleshooting and post-incident analysis.
+K8sDoctor is a small, focused Kubernetes incident diagnostics tool for SREs and DevOps engineers. It scans a cluster for unhealthy pods and automatically collects targeted diagnostics (describe, per-container logs, events filtered to the pod, and the pod YAML) into a timestamped incident folder.
 
 ---
 
@@ -89,18 +87,19 @@ Each incident folder follows the pattern:
 ```
 reports/
   incident_<namespace>_<pod>_<timestamp>/
-    summary.txt                # brief incident summary + collected files list
+    summary.txt                # brief incident summary + collected files list (includes RUN_TS)
     describe.txt               # kubectl describe pod
     pod.yaml                   # kubectl get pod -o yaml
     events.txt                 # events filtered to this pod
     containers/                # per-container logs
       <container>_logs.txt
       <container>_previous_logs.txt
-    cluster_info/              # kubectl version, nodes
+    cluster_info/              # kubectl client version & nodes information
       kubectl_client_version.txt
-      cluster_version.txt
       nodes.txt
 ```
+
+Note: the script collects the kubectl client version and the node list under `cluster_info/`. It does not collect a separate `cluster_version.txt` file.
 
 The `summary.txt` is designed to give a quick overview for the incident responder; the rest of the files contain the raw outputs you would normally gather manually.
 
@@ -112,10 +111,8 @@ The script requires a user/service account with the following permissions across
 
 - pods: get, list, watch
 - pods/log: get
-- pods/exec: (not required by default)
 - events: get, list
 - nodes: get, list
-- version/cluster-info (kubectl version) — kubectl client call
 
 If you want to run K8sDoctor from inside the cluster (recommended for automation), create a minimal ClusterRole/ClusterRoleBinding granting the above verbs. I can provide a sample manifest if you want.
 
@@ -148,4 +145,3 @@ Contributions are welcome — raise issues or PRs. If you want a small, focused 
 ## License
 
 MIT — see the LICENSE file.
->>>>>>> 8f9c483 (added improved files)
