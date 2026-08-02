@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # K8sDoctor
 =======
 # K8sDoctor
